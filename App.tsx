@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
+
+interface Tarefa {
+  id: string;
+  texto: string;
+  concluida: boolean;
+}
 
 export default function App() {
   const [tarefa, setTarefa] = useState('');
-  const [tarefas, setTarefas] = useState([]);
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+
+  const onLayoutRootView = useCallback(async () => {
+    await SplashScreen.hideAsync();
+  }, []);
 
   // .trim() é um método que remove os espaços em branco do início e do fim da string, garantindo que o usuário não possa adicionar tarefas vazias ou com apenas espaços.
   function adicionarTarefa() {
@@ -23,7 +36,7 @@ export default function App() {
 
   // toggleTarefa - esta função é responsável por alternar o estado de conclusão de uma tarefa. Ela recebe o id da tarefa como parâmetro e atualiza o array de tarefas, invertendo o valor da propriedade concluida para a tarefa correspondente. O método map é usado para criar um novo array de tarefas, onde cada item é verificado: se o id do item corresponde ao id fornecido, a propriedade concluida é invertida; caso contrário, o item permanece inalterado.
   // *O map() method creates a new array populated with the results of calling a provided function on every element in the calling array.
-  function toggleTarefa(id) {
+  function toggleTarefa(id: string) {
     setTarefas(tarefas.map(item =>
       item.id === id ? { ...item, concluida: !item.concluida } : item
     ));
@@ -31,12 +44,12 @@ export default function App() {
 
   //? function deletarTarefa - esta função é responsável por remover uma tarefa do array de tarefas. Ela recebe o id da tarefa como parâmetro e atualiza o array de tarefas, filtrando-o para excluir a tarefa com o id correspondente. O método filter é usado para criar um novo array que inclui apenas os itens cujo id não corresponde ao id fornecido.
   // *The filter() method creates a new array with all elements that pass the test implemented by the provided function.  
-  function deletarTarefa(id) {
+  function deletarTarefa(id: string) {
     setTarefas(tarefas.filter(item => item.id !== id));
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <Text style={styles.titulo}>Minhas Tarefas</Text>
 
       <View style={styles.inputContainer}>
