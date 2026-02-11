@@ -1,6 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import AnimatedSplashScreen from './AnimatedSplashScreen';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import AnimatedSplashScreen from "./AnimatedSplashScreen";
+
+// Manter a splash screen nativa visível até que o app esteja pronto
+SplashScreen.preventAutoHideAsync();
 
 interface Tarefa {
   id: string;
@@ -10,12 +21,12 @@ interface Tarefa {
 
 export default function App() {
   const [isAppReady, setIsAppReady] = useState(false);
-  const [tarefa, setTarefa] = useState('');
+  const [tarefa, setTarefa] = useState("");
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
   // .trim() é um método que remove os espaços em branco do início e do fim da string, garantindo que o usuário não possa adicionar tarefas vazias ou com apenas espaços.
   function adicionarTarefa() {
-    if (tarefa.trim() === '') return;
+    if (tarefa.trim() === "") return;
     const novaTarefa = {
       id: Date.now().toString(),
       texto: tarefa,
@@ -24,25 +35,29 @@ export default function App() {
 
     setTarefas([...tarefas, novaTarefa]);
     // ... é o operador de espalhamento, que cria um novo array com os itens existentes e adiciona a nova tarefa no final
-    setTarefa('');
+    setTarefa("");
   }
 
   // toggleTarefa - esta função é responsável por alternar o estado de conclusão de uma tarefa. Ela recebe o id da tarefa como parâmetro e atualiza o array de tarefas, invertendo o valor da propriedade concluida para a tarefa correspondente. O método map é usado para criar um novo array de tarefas, onde cada item é verificado: se o id do item corresponde ao id fornecido, a propriedade concluida é invertida; caso contrário, o item permanece inalterado.
   // *O map() method creates a new array populated with the results of calling a provided function on every element in the calling array.
   function toggleTarefa(id: string) {
-    setTarefas(tarefas.map(item =>
-      item.id === id ? { ...item, concluida: !item.concluida } : item
-    ));
+    setTarefas(
+      tarefas.map((item) =>
+        item.id === id ? { ...item, concluida: !item.concluida } : item,
+      ),
+    );
   }
 
   //? function deletarTarefa - esta função é responsável por remover uma tarefa do array de tarefas. Ela recebe o id da tarefa como parâmetro e atualiza o array de tarefas, filtrando-o para excluir a tarefa com o id correspondente. O método filter é usado para criar um novo array que inclui apenas os itens cujo id não corresponde ao id fornecido.
-  // *The filter() method creates a new array with all elements that pass the test implemented by the provided function.  
+  // *The filter() method creates a new array with all elements that pass the test implemented by the provided function.
   function deletarTarefa(id: string) {
-    setTarefas(tarefas.filter(item => item.id !== id));
+    setTarefas(tarefas.filter((item) => item.id !== id));
   }
 
   if (!isAppReady) {
-    return <AnimatedSplashScreen onAnimationFinish={() => setIsAppReady(true)} />;
+    return (
+      <AnimatedSplashScreen onAnimationFinish={() => setIsAppReady(true)} />
+    );
   }
 
   return (
@@ -68,17 +83,25 @@ export default function App() {
         data={tarefas}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.tarefaItem} onPress={() => toggleTarefa(item.id)}>
-            <Text style={[styles.tarefaTexto, item.concluida && styles.tarefaConcluida]}>
+          <TouchableOpacity
+            style={styles.tarefaItem}
+            onPress={() => toggleTarefa(item.id)}
+          >
+            <Text
+              style={[
+                styles.tarefaTexto,
+                item.concluida && styles.tarefaConcluida,
+              ]}
+            >
               {item.texto}
             </Text>
 
             <TouchableOpacity
               style={styles.botaoDeletar}
-              onPress={() => deletarTarefa(item.id)}>
+              onPress={() => deletarTarefa(item.id)}
+            >
               <Text style={styles.textoDeletar}>X</Text>
             </TouchableOpacity>
-
           </TouchableOpacity>
         )}
       />
@@ -87,23 +110,23 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: "#F0F4F8",
     paddingTop: 80,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   titulo: {
-    color: '#007BFF',
+    color: "#007BFF",
     fontSize: 36,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 30,
-    textAlign: 'center'
+    textAlign: "center",
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 30,
-    alignItems: 'center'
+    alignItems: "center",
   },
   input: {
     flex: 1,
@@ -115,40 +138,39 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: "#333",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-
   },
   botaoAdicionar: {
     backgroundColor: "#007BFF",
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
   textoBotao: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 30,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   tarefaItem: {
     backgroundColor: "#FFFFFF",
     padding: 20,
     borderRadius: 20,
     marginBottom: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -159,16 +181,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tarefaConcluida: {
-    textDecorationLine: 'line-through',
-    color: "#999"
+    textDecorationLine: "line-through",
+    color: "#999",
   },
   botaoDeletar: {
     marginLeft: 15,
     padding: 5,
   },
   textoDeletar: {
-    color: '#FF3B30',
-    fontWeight: 'bold',
-    fontSize: 20
+    color: "#FF3B30",
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });
