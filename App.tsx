@@ -1,8 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
+import AnimatedSplashScreen from './AnimatedSplashScreen';
 
 interface Tarefa {
   id: string;
@@ -11,12 +9,9 @@ interface Tarefa {
 }
 
 export default function App() {
+  const [isAppReady, setIsAppReady] = useState(false);
   const [tarefa, setTarefa] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
-
-  const onLayoutRootView = useCallback(async () => {
-    await SplashScreen.hideAsync();
-  }, []);
 
   // .trim() é um método que remove os espaços em branco do início e do fim da string, garantindo que o usuário não possa adicionar tarefas vazias ou com apenas espaços.
   function adicionarTarefa() {
@@ -26,8 +21,6 @@ export default function App() {
       texto: tarefa,
       concluida: false,
     };
-
-
 
     setTarefas([...tarefas, novaTarefa]);
     // ... é o operador de espalhamento, que cria um novo array com os itens existentes e adiciona a nova tarefa no final
@@ -48,8 +41,12 @@ export default function App() {
     setTarefas(tarefas.filter(item => item.id !== id));
   }
 
+  if (!isAppReady) {
+    return <AnimatedSplashScreen onAnimationFinish={() => setIsAppReady(true)} />;
+  }
+
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <View style={styles.container}>
       <Text style={styles.titulo}>Minhas Tarefas</Text>
 
       <View style={styles.inputContainer}>
@@ -90,7 +87,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+    container: {
     flex: 1,
     backgroundColor: '#F0F4F8',
     paddingTop: 80,

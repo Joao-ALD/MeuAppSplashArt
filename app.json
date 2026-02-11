@@ -4,22 +4,24 @@
     "slug": "MeuAppSplashArt",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon3.png",
+    "icon": "./assets/icon5.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon3.png",
-      "resizeMode": "cover",
+      "image": "./assets/splash-icon4.png",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
+      
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "splash": {
-        "image": "./assets/splash-icon3.png",
-        "resizeMode": "cover",
+        "image": "./assets/splash-icon4.png",
+        "resizeMode": "contain",
         "backgroundColor": "#ffffff"
+        
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
